@@ -1,0 +1,6 @@
+# 强制所有文本文件在仓库中使用 LF
+* text=auto eol=lf
+
+# Windows 批处理文件例外，必须用 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf

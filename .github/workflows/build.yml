@@ -2,12 +2,6 @@ name: Build Installers
 
 on:
   workflow_dispatch:
-    inputs:
-      build_tag:
-        description: 'Build tag or version'
-        required: false
-        default: ''
-        type: string
 
 permissions:
   contents: read
@@ -72,8 +66,6 @@ jobs:
 
       - name: Build Tauri app
         run: pnpm exec tauri build --target ${{ matrix.target }}
-        env:
-          BUILD_TAG: ${{ github.event.inputs.build_tag }}
 
       - name: Upload installers
         uses: actions/upload-artifact@v4

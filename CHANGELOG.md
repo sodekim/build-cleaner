@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0](https://github.com/sodekim/build-cleaner/compare/v0.2.2...v0.3.0) (2026-07-24)
+
+### ✨ Features
+
+* **scan:** add clear results button in filter bar ([8ef967a](https://github.com/sodekim/build-cleaner/commit/8ef967a3e94caa4c782667b5ed0f68ee69784fc7))
+
+### ♻️ Refactoring
+
+* **ecosystem:** change ecosystem buttons from multi-select to filter mode ([688519d](https://github.com/sodekim/build-cleaner/commit/688519d7d591e2e41ed581c5f96edcb57aa15bea))
+
+### 📝 Documentation
+
+* **readme:** rewrite README with screenshots and add Chinese version ([eb339af](https://github.com/sodekim/build-cleaner/commit/eb339af7b8e8238da5c7afbcb6292fc1ab0abfeb))
+
 ## [0.2.2](https://github.com/sodekim/build-cleaner/compare/v0.2.1...v0.2.2) (2026-07-24)
 
 ### 🐛 Bug Fixes

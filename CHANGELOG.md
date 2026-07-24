@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0](https://github.com/sodekim/build-cleaner/compare/v0.3.0...v0.4.0) (2026-07-24)
+
+### 🐛 Bug Fixes
+
+* update app identifier to io.github.sodekim.build-cleaner ([89fb542](https://github.com/sodekim/build-cleaner/commit/89fb542e5c159918228a5284004836ec52709651))
+
+### 📝 Documentation
+
+* add Copilot instructions for codebase context ([37f8b46](https://github.com/sodekim/build-cleaner/commit/37f8b465dee04ea658a846f8186f5faf2bccbc68))
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
 ## [0.3.0](https://github.com/sodekim/build-cleaner/compare/v0.2.2...v0.3.0) (2026-07-24)
 
 ### ✨ Features

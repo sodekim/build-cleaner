@@ -7,6 +7,8 @@ type SortDir = "asc" | "desc";
 
 interface ScanListProps {
   entries: BuildEntry[];
+  ecosystems: [string, number][];
+  activeEcosystems: Set<string>;
   selected: Set<string>;
   onToggle: (id: string) => void;
   onToggleAll: () => void;
@@ -30,6 +32,8 @@ const ECO_COLORS: Record<string, { bg: string; text: string; border: string }> =
 
 export default function ScanList({
   entries,
+  ecosystems,
+  activeEcosystems,
   selected,
   onToggle,
   onToggleAll,
@@ -50,12 +54,6 @@ export default function ScanList({
       setSortDir(key === "path" || key === "ecosystem" || key === "rule_name" ? "asc" : "desc");
     }
   };
-
-  const ecosystems = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const e of entries) map.set(e.ecosystem, (map.get(e.ecosystem) ?? 0) + 1);
-    return [...map.entries()];
-  }, [entries]);
 
   const sortedEntries = useMemo(() => {
     const copy = [...entries];
@@ -82,14 +80,8 @@ export default function ScanList({
   const allChecked = entries.length > 0 && selected.size === entries.length;
   const indeterminate = selected.size > 0 && selected.size < entries.length;
 
-  // 判断某个生态是否已全部选中（用于多选叠加按钮的高亮态）
-  const isEcosystemActive = (eco: string) => {
-    const ecoEntries = entries.filter((e) => e.ecosystem === eco);
-    return (
-      ecoEntries.length > 0 &&
-      ecoEntries.every((e) => selected.has(e.id))
-    );
-  };
+  // 判断某个生态是否处于筛选激活态
+  const isEcosystemActive = (eco: string) => activeEcosystems.has(eco);
 
   /** Render a clickable sort-indicator arrow. */
   const sortArrow = (key: SortKey) => {
@@ -130,7 +122,7 @@ export default function ScanList({
               }`}
               onClick={() => onToggleEcosystem(eco)}
               aria-pressed={active}
-              title={active ? `点击取消选中全部 ${eco} 生态` : `点击叠加选中全部 ${eco} 生态`}
+              title={active ? `点击取消筛选 ${eco} 生态` : `点击仅显示 ${eco} 生态`}
             >
               <span
                 className={`flex h-3.5 w-3.5 items-center justify-center rounded-full border transition-colors ${
@@ -193,11 +185,15 @@ export default function ScanList({
         {entries.length === 0 && !scanning ? (
           <div className="flex h-full flex-col items-center justify-center p-8 text-center animate-fade-in">
             <div className="relative mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-3xl shadow-inner text-slate-400 border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
-              🗂️
+              {activeEcosystems.size > 0 ? "🔍" : "🗂️"}
             </div>
-            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">没有发现可清理的构建目录</h3>
+            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+              {activeEcosystems.size > 0 ? "当前筛选下没有匹配的构建目录" : "没有发现可清理的构建目录"}
+            </h3>
             <p className="mt-1 text-sm text-slate-400 max-w-sm dark:text-slate-500">
-              请在上方区域选择一个正确的项目根目录，然后点击「开始扫描」按钮。
+              {activeEcosystems.size > 0
+                ? "取消生态筛选即可查看全部扫描结果。"
+                : "请在上方区域选择一个正确的项目根目录，然后点击「开始扫描」按钮。"}
             </p>
           </div>
         ) : (

@@ -22,6 +22,7 @@ export default function App() {
   const [root, setRoot] = useState<string>("");
   const [entries, setEntries] = useState<BuildEntry[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [activeEcosystems, setActiveEcosystems] = useState<Set<string>>(new Set());
   const [scanning, setScanning] = useState(false);
   const [cleaning, setCleaning] = useState(false);
   const [progressText, setProgressText] = useState("");
@@ -56,6 +57,17 @@ export default function App() {
 
   const enabledRules = useMemo(() => rules.filter((r) => r.enabled), [rules]);
 
+  const allEcosystems = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const e of entries) map.set(e.ecosystem, (map.get(e.ecosystem) ?? 0) + 1);
+    return [...map.entries()];
+  }, [entries]);
+
+  const filteredEntries = useMemo(() => {
+    if (activeEcosystems.size === 0) return [];
+    return entries.filter((e) => activeEcosystems.has(e.ecosystem));
+  }, [entries, activeEcosystems]);
+
   async function handlePick() {
     const dir = await pickDirectory();
     if (dir) setRoot(dir);
@@ -64,6 +76,7 @@ export default function App() {
   function handleClear() {
     setEntries([]);
     setSelected(new Set());
+    setActiveEcosystems(new Set());
     setProgressText("");
   }
 
@@ -72,6 +85,7 @@ export default function App() {
     setScanning(true);
     setEntries([]);
     setSelected(new Set());
+    setActiveEcosystems(new Set());
     setProgressText("扫描中…");
     try {
       const result = await scanDirectory(root, enabledRules, (e) => {
@@ -80,6 +94,8 @@ export default function App() {
         else if (e.kind === "Done") setProgressText(`完成，共 ${e.total} 个目录，合计 ${formatBytes(e.total_size)}`);
       });
       setEntries(result);
+      // 默认选中所有生态，显示全部扫描结果
+      setActiveEcosystems(new Set(result.map((e) => e.ecosystem)));
     } catch (err: any) {
       setToast({ kind: "error", msg: String(err) });
     } finally {
@@ -98,25 +114,26 @@ export default function App() {
 
   function toggleAll() {
     setSelected((prev) => {
-      if (prev.size === entries.length) return new Set();
-      return new Set(entries.map((e) => e.id));
+      if (prev.size === filteredEntries.length) return new Set();
+      return new Set(filteredEntries.map((e) => e.id));
     });
   }
 
-  // 多选叠加：点击生态按钮切换该生态全部条目的选中状态，
-  // 多个生态可同时激活，选中项会叠加累积到清理列表中。
+  // 点击生态按钮切换该生态的筛选状态，
+// 取消筛选时移除该生态已勾选的条目，选中筛选时保留原有勾选
   function toggleEcosystem(eco: string) {
-    setSelected((prev) => {
+    setActiveEcosystems((prev) => {
       const next = new Set(prev);
-      const ecoEntries = entries.filter((e) => e.ecosystem === eco);
-      const allSelected =
-        ecoEntries.length > 0 && ecoEntries.every((e) => next.has(e.id));
-      if (allSelected) {
-        // 该生态已全部选中 → 取消选中该生态的全部条目
-        for (const e of ecoEntries) next.delete(e.id);
-      } else {
-        // 该生态未全部选中 → 叠加选中该生态的全部条目
-        for (const e of ecoEntries) next.add(e.id);
+      const removing = next.has(eco);
+      if (removing) next.delete(eco);
+      else next.add(eco);
+      if (removing) {
+        const ecoIds = new Set(entries.filter((e) => e.ecosystem === eco).map((e) => e.id));
+        setSelected((sel) => {
+          const ns = new Set(sel);
+          for (const id of ecoIds) ns.delete(id);
+          return ns;
+        });
       }
       return next;
     });
@@ -181,7 +198,9 @@ export default function App() {
       <main className="flex-1 overflow-hidden">
         {tab === "scan" ? (
           <ScanList
-            entries={entries}
+            entries={filteredEntries}
+            ecosystems={allEcosystems}
+            activeEcosystems={activeEcosystems}
             selected={selected}
             onToggle={toggleSelect}
             onToggleAll={toggleAll}
@@ -197,7 +216,7 @@ export default function App() {
       </main>
 
       <Footer
-        total={entries.length}
+        total={filteredEntries.length}
         selectedCount={selected.size}
         selectedSize={totalSelectedSize}
         onClean={handleClean}

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1](https://github.com/sodekim/build-cleaner/compare/v0.2.0...v0.2.1) (2026-07-24)
+
+### 🐛 Bug Fixes
+
+* **release:** sync version to Cargo.toml ([25f0a5c](https://github.com/sodekim/build-cleaner/commit/25f0a5ccb857439d21d2e3dfdf360e88dcab097b))
+
 ## 0.2.0 (2026-07-24)
 
 ### ✨ Features

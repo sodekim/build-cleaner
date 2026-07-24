@@ -2,7 +2,7 @@
 name = "build-cleaner"
 version = "0.3.0"
 description = "A tool to clean build directories (Maven, Gradle, Cargo, etc.)"
-authors = ["you"]
+authors = ["sodekim <w-sodalite@hotmail.com>"]
 edition = "2021"
 rust-version = "1.77"
 

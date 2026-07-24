@@ -31,3 +31,17 @@ const updatedCargo = cargoContent.replace(
 );
 writeFileSync(cargoFile, updatedCargo);
 console.log(`✔ Updated ${cargoFile} → v${version}`);
+
+// --- Cargo.lock ---
+// Cargo.lock records the package's own version under [[package]]. Update it to
+// match Cargo.toml so the release commit stays self-consistent (otherwise Cargo
+// rewrites Cargo.lock on the next build and leaves a stray dirty diff).
+const lockFile = "src-tauri/Cargo.lock";
+const lockContent = readFileSync(lockFile, "utf-8");
+// Match the version line that appears right after `name = "build-cleaner"`.
+const lockPattern = /(\[\[package\]\]\n(?:.*\n)*?name\s*=\s*"build-cleaner"\n(?:.*\n)*?version\s*=\s*)"[^"]*"/;
+const lockUpdated = lockPattern.test(lockContent)
+  ? lockContent.replace(lockPattern, `$1"${version}"`)
+  : lockContent;
+writeFileSync(lockFile, lockUpdated);
+console.log(`✔ Updated ${lockFile} → v${version}`);

@@ -97,7 +97,7 @@ export default function ScanList({
     );
   };
 
-  const thClass = (key: SortKey, extra?: string) =>
+  const thClass = (_: SortKey, extra?: string) =>
     `cursor-pointer select-none px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400 transition-colors hover:text-indigo-600 dark:text-slate-500 dark:hover:text-indigo-400 ${extra ?? ""}`;
 
   return (

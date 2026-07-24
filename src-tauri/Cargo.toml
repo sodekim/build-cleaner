@@ -1,6 +1,6 @@
 [package]
 name = "build-cleaner"
-version = "0.1.0"
+version = "0.2.0"
 description = "A tool to clean build directories (Maven, Gradle, Cargo, etc.)"
 authors = ["you"]
 edition = "2021"

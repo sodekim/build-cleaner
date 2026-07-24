@@ -77,6 +77,18 @@ jobs:
       - name: Build Tauri app
         run: pnpm exec tauri build --target ${{ matrix.target }}
 
+      - name: Rename MSI (strip locale suffix)
+        if: startsWith(matrix.platform, 'windows')
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "src-tauri/target/${{ matrix.target }}/release/bundle/**/*.msi" | ForEach-Object {
+            $newName = $_.Name -replace '_en-US\.msi$', '.msi'
+            if ($newName -ne $_.Name) {
+              Rename-Item -Path $_.FullName -NewName $newName
+              Write-Host "Renamed: $($_.Name) -> $newName"
+            }
+          }
+
       - name: Upload installers to Release
         uses: softprops/action-gh-release@v2
         with:

@@ -13,6 +13,8 @@ interface ScanListProps {
   onToggleEcosystem: (eco: string) => void;
   scanning: boolean;
   progressText: string;
+  onClear: () => void;
+  canClear: boolean;
 }
 
 const ECO_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -34,6 +36,8 @@ export default function ScanList({
   onToggleEcosystem,
   scanning,
   progressText,
+  onClear,
+  canClear,
 }: ScanListProps) {
   const [sortKey, setSortKey] = useState<SortKey>("size");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -150,6 +154,27 @@ export default function ScanList({
         })}
 
         <div className="flex-1" />
+
+        {/* 清空结果按钮 */}
+        {entries.length > 0 && !scanning && (
+          <button
+            type="button"
+            className="flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-200/80 bg-white px-3 py-1 text-xs font-medium text-slate-500 shadow-sm transition-all hover:-translate-y-px active:translate-y-0 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:border-rose-700 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 disabled:pointer-events-none disabled:opacity-50"
+            onClick={onClear}
+            disabled={!canClear}
+            title="清空当前扫描结果"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            <span>清空结果</span>
+          </button>
+        )}
 
         {/* 扫描中动画 */}
         {scanning && (

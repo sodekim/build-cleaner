@@ -61,6 +61,12 @@ export default function App() {
     if (dir) setRoot(dir);
   }
 
+  function handleClear() {
+    setEntries([]);
+    setSelected(new Set());
+    setProgressText("");
+  }
+
   async function handleScan() {
     if (!root) return;
     setScanning(true);
@@ -182,6 +188,8 @@ export default function App() {
             onToggleEcosystem={toggleEcosystem}
             scanning={scanning}
             progressText={progressText}
+            onClear={handleClear}
+            canClear={entries.length > 0 && !scanning}
           />
         ) : (
           <RuleEditor rules={rules} onSave={handleSaveRules} />

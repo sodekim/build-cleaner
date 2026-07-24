@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2](https://github.com/sodekim/build-cleaner/compare/v0.2.1...v0.2.2) (2026-07-24)
+
+### 🐛 Bug Fixes
+
+* **release:** sync version to Cargo.lock in bump script ([05ee134](https://github.com/sodekim/build-cleaner/commit/05ee134960181481b73f0092b8b400b0951b0a92))
+
 ## [0.2.1](https://github.com/sodekim/build-cleaner/compare/v0.2.0...v0.2.1) (2026-07-24)
 
 ### 🐛 Bug Fixes

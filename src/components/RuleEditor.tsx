@@ -50,7 +50,7 @@ export default function RuleEditor({ rules, onSave }: RuleEditorProps) {
   }
 
   return (
-    <div className="h-full overflow-auto bg-slate-50/50 p-6 transition-colors duration-300 dark:bg-slate-950/50">
+    <div className="h-full overflow-auto bg-slate-50/50 p-6 transition-colors duration-150 dark:bg-slate-950/50">
       <div className="mx-auto max-w-4xl">
         {/* 头部摘要配配置 */}
         <div className="mb-6 flex items-start justify-between">

@@ -18,7 +18,7 @@ export default function Footer({
   disabled,
 }: FooterProps) {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50 px-6 py-4 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/50">
+    <footer className="border-t border-slate-200 bg-slate-50 px-6 py-4 transition-colors duration-150 dark:border-slate-800 dark:bg-slate-900/50">
       <div className="flex items-center justify-between">
         {/* 指标展示 */}
         <div className="flex items-center gap-6 text-sm text-slate-500">

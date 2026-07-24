@@ -26,7 +26,11 @@ export async function scanDirectory(
 ): Promise<BuildEntry[]> {
   const channel = new Channel<ScanEvent>();
   channel.onmessage = onEvent;
-  return invoke<BuildEntry[]>("scan_directory", { root, rules, onEvent: channel });
+  return invoke<BuildEntry[]>("scan_directory", {
+    root,
+    rules,
+    onEvent: channel,
+  });
 }
 
 export async function cleanDirectories(

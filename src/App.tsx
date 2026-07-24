@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { BuildEntry, ScanRule } from "./types";
 import {
   cleanDirectories,
@@ -43,6 +44,8 @@ export default function App() {
       document.documentElement.classList.remove("dark");
     }
     localStorage.setItem("theme", theme);
+    // Sync the OS-level window title bar theme with the app theme
+    getCurrentWindow().setTheme(theme).catch(() => {});
   }, [theme]);
 
   useEffect(() => {
@@ -157,7 +160,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-slate-50 text-slate-800 transition-colors duration-300 antialiased dark:bg-slate-950 dark:text-slate-200">
+    <div className="flex h-full flex-col bg-slate-50 text-slate-800 transition-colors duration-150 antialiased dark:bg-slate-950 dark:text-slate-200">
       <Header
         tab={tab}
         onTab={setTab}
@@ -198,7 +201,7 @@ export default function App() {
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
           <div
-            className={`flex items-center gap-3 rounded-xl border p-4 shadow-xl backdrop-blur-md transition-colors duration-300 ${
+            className={`flex items-center gap-3 rounded-xl border p-4 shadow-xl backdrop-blur-md transition-colors duration-150 ${
               toast.kind === "error"
                 ? "border-rose-100 bg-rose-50/95 text-rose-800 dark:border-rose-900/50 dark:bg-rose-950/90 dark:text-rose-200"
                 : toast.kind === "success"

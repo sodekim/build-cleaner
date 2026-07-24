@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
 interface HeaderProps {
   tab: "scan" | "rules";
   onTab: (t: "scan" | "rules") => void;
@@ -19,8 +22,24 @@ export default function Header({
   theme,
   onToggleTheme,
 }: HeaderProps) {
+  const [isMaximized, setIsMaximized] = useState(false);
+  const appWindow = getCurrentWindow();
+
+  useEffect(() => {
+    appWindow.isMaximized().then(setIsMaximized).catch(() => {});
+    const unlisten = appWindow.onResized(() => {
+      appWindow.isMaximized().then(setIsMaximized).catch(() => {});
+    });
+    return () => {
+      unlisten.then((fn) => fn()).catch(() => {});
+    };
+  }, [appWindow]);
+
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+    <header
+      data-tauri-drag-region
+      className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 transition-colors duration-150 dark:border-slate-800 dark:bg-slate-900"
+    >
       {/* 左侧：Logo & 选项卡 */}
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2">
@@ -144,11 +163,11 @@ export default function Header({
         <button
           type="button"
           onClick={onToggleTheme}
-          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           title={theme === "light" ? "切换到深色模式" : "切换到浅色模式"}
         >
           {theme === "light" ? (
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -157,7 +176,7 @@ export default function Header({
               />
             </svg>
           ) : (
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -167,6 +186,46 @@ export default function Header({
             </svg>
           )}
         </button>
+
+        {/* 窗口控制按钮 */}
+        <div className="flex items-center gap-1 ml-2">
+          <button
+            type="button"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            onClick={() => appWindow.minimize()}
+            title="最小化"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            onClick={() => appWindow.toggleMaximize()}
+            title={isMaximized ? "向下还原" : "最大化"}
+          >
+            {isMaximized ? (
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9H5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-4M15 15h4a2 2 0 002-2V5a2 2 0 00-2-2h-8a2 2 0 00-2 2v4" />
+              </svg>
+            ) : (
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5h14v14H5z" />
+              </svg>
+            )}
+          </button>
+          <button
+            type="button"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-500 hover:text-white dark:text-slate-500 dark:hover:bg-red-600"
+            onClick={() => appWindow.close()}
+            title="关闭"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
   );

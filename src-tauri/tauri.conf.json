@@ -13,11 +13,12 @@
     "windows": [
       {
         "title": "Build Cleaner",
-        "width": 1100,
+        "width": 1400,
         "height": 760,
-        "minWidth": 880,
+        "minWidth": 1400,
         "minHeight": 600,
-        "resizable": true
+        "resizable": true,
+        "decorations": false
       }
     ],
     "security": {

@@ -1,54 +1,112 @@
 # Build Cleaner
 
-一个用于清理机器上构建产物目录（Maven `target`、Gradle `build`、Cargo `target`、npm `node_modules`、.NET `bin/obj`、Python `__pycache__` 等）的跨平台桌面工具。
+A cross-platform desktop tool for reclaiming disk space by cleaning up build artifacts — Maven `target`, Gradle `build`, Cargo `target`, npm `node_modules`, .NET `bin`/`obj`, Python `__pycache__`, and more.
 
-## 功能特性
+[中文版](README.zh-CN.md)
 
-- **智能扫描**：选择根目录后递归扫描所有子目录，自动识别构建产物
-- **规则匹配**：基于可配置规则判定构建目录（支持目录名匹配 + 标记文件验证）
-- **多生态支持**：内置 Maven、Gradle、Cargo、npm、.NET、Python、CMake 等预设规则
-- **可视化列表**：展示路径、生态类型、大小、文件数、匹配规则
-- **批量操作**：支持多选、全选/反选、按生态筛选，底部实时统计已选数量与释放空间
-- **安全清理**：二次确认后执行删除，扫描与清理过程实时显示进度
-- **规则自定义**：支持增删改规则，持久化保存到本地
-- **明暗主题**：右上角一键切换浅色/深色模式，重启后保留
+<p align="center">
+  <img src="screenshots/main.png" alt="Scan" width="49%" />
+  <img src="screenshots/rule.png" alt="Rules" width="49%" />
+</p>
 
-## 技术栈
+## Features
 
-| 层级 | 技术 |
+- **Smart scanning** — Recursively scan any directory and automatically identify build artifacts using configurable rules
+- **Rule-based matching** — Directory name matching combined with marker file verification (e.g., `pom.xml` for Maven targets)
+- **Multi-ecosystem support** — Built-in presets for Maven, Gradle, Cargo, npm, .NET, Python, and CMake
+- **Visual overview** — See path, ecosystem, size, file count, and matched rule at a glance
+- **Batch operations** — Multi-select, select/deselect all, and filter by ecosystem with live statistics
+- **Safe cleanup** — Confirmation dialog before deletion, with real-time progress during scan and clean
+- **Custom rules** — Add, edit, enable/disable, or delete scan rules — changes persist across restarts
+- **Dark mode** — One-click toggle, remembered across sessions
+
+## Installation
+
+Download the latest installer from [GitHub Releases](https://github.com/sodekim/build-cleaner/releases):
+
+| Platform | Package | Notes |
+| --- | --- | --- |
+| Windows | `.msi` / `.exe` | `.msi` for system-wide install, `.exe` for portable use |
+| macOS | `.dmg` | Drag to Applications. Use `aarch64` for Apple Silicon, `x64` for Intel |
+| Linux | `.AppImage` / `.deb` | `.AppImage` runs directly; `.deb` for Debian/Ubuntu-based distros |
+
+## Usage
+
+1. **Pick a directory** — Click "Select Directory" and choose the root folder to scan
+2. **Review results** — Build artifact directories appear in a sortable table with size and ecosystem info
+3. **Filter** — Click ecosystem tags to narrow down by build system type
+4. **Select** — Check the directories you want to remove; the footer shows total selected count and space to free
+5. **Clean** — Click "Clean Selected", confirm, and watch the progress in real time
+6. **Manage rules** — Switch to the "Rules" tab to customize scanning behavior
+
+> [!TIP]
+> Ecosystem filters are additive — click multiple tags to select build artifacts from several ecosystems at once before cleaning.
+
+## Built-in Rules
+
+| Ecosystem | Directory | Marker Files | Default |
+| --- | --- | --- | --- |
+| Maven | `target` | `pom.xml` | On |
+| Gradle | `build`, `.gradle` | `build.gradle(.kts)`, `settings.gradle(.kts)` | On |
+| Cargo | `target` | `Cargo.toml` | On |
+| npm | `node_modules` | `package.json` | On |
+| JS | `dist`, `build` | `package.json` | Off |
+| .NET | `bin`, `obj` | `*.csproj`, `*.fsproj` | On |
+| Python | `__pycache__`, `.pytest_cache`, `.mypy_cache` | — | On |
+| CMake | `build` | `CMakeLists.txt` | Off |
+
+## Tech Stack
+
+| Layer | Technology |
 | --- | --- |
-| 桌面框架 | Tauri 2 |
-| 前端框架 | React 18 + TypeScript |
-| 样式方案 | Tailwind CSS v4（纯原生类，无 UI 组件库依赖） |
-| 构建工具 | Vite 6 |
-| 后端语言 | Rust（edition 2021） |
-| 并行计算 | rayon（目录大小统计） |
-| 异步运行时 | tokio（扫描/清理任务调度） |
-| 目录遍历 | walkdir |
+| Desktop framework | [Tauri 2](https://tauri.app/) |
+| Frontend | React 18, TypeScript, [Tailwind CSS v4](https://tailwindcss.com/), [daisyUI](https://daisyui.com/) |
+| Backend | Rust (edition 2021), [tokio](https://tokio.rs/), [rayon](https://github.com/rayon-rs/rayon), [walkdir](https://crates.io/crates/walkdir) |
+| Build tooling | Vite 6, [release-it](https://github.com/release-it/release-it) |
 
-## 安装与运行
+## Development
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 24+
+- [pnpm](https://pnpm.io/) 11+
+- [Rust](https://www.rust-lang.org/) 1.77+
+
+### Setup
 
 ```bash
-# 安装依赖
 pnpm install
+```
 
-# 开发模式运行
+### Run in development mode
+
+```bash
 pnpm tauri:dev
+```
 
-# 打包生产版本
+This starts the Vite dev server and opens the Tauri window with hot-reload for both frontend and Rust code.
+
+### Build for production
+
+```bash
 pnpm tauri:build
 ```
 
-## 使用说明
+Installers are output to `src-tauri/target/release/bundle/`.
 
-1. **扫描目录**：点击「选择目录」按钮，选择要扫描的根目录
-2. **查看结果**：扫描完成后，构建产物目录会显示在列表中
-3. **筛选过滤**：使用生态标签筛选特定类型的构建目录
-4. **选择清理**：勾选要删除的目录，底部会显示选中数量和释放空间
-5. **执行清理**：点击「立即清理选中」按钮，确认后删除选中目录
-6. **管理规则**：切换到「扫描规则」标签页，可增删改扫描规则
+### Lint
 
-## 许可
+```bash
+pnpm lint
+```
 
-MIT
+### Release
 
+This project uses [release-it](https://github.com/release-it/release-it) with conventional commits:
+
+```bash
+pnpm release          # full release
+pnpm release:dry      # dry run
+```
+
+Releases are automatically built and published by the [Build Installers](.github/workflows/build-installers.yml) workflow when a new GitHub Release is created.
